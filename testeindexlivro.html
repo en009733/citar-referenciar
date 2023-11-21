@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referenciei</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            /* background-color: #3498db; Cor de fundo bacana */
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #2c3e50;
+            padding: 10px 20px;
+        }
+
+        header img {
+            width: 60px; /* Reduzindo tamanho do logo para mobile */
+            height: 60px; /* Reduzindo tamanho do logo para mobile */
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav li {
+            margin: 0 10px;
+            color: #fff; /* Cor do texto do menu */
+        }
+
+        nav a {
+            text-decoration: none; /* Remover sublinhado nos links */
+            color: inherit; /* Herdar a cor do elemento pai */
+        }
+
+        h1 {
+            text-align: center;
+            /* color: #fff; */
+            margin-top: 30px; /* Reduzindo margem superior para mobile */
+        }
+
+        .main-menu {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .main-menu ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .main-menu li {
+            margin: 10px 0;
+        }
+
+        @media screen and (min-width: 768px) {
+            /* Estilos para telas maiores que 768px (tablets e desktops) */
+            header img {
+                width: 80px;
+                height: 80px;
+            }
+
+            h1 {
+                margin-top: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="seu-logo.png" alt="Logo da Referenciei">
+        <nav>
+            <ul>
+                <li><a href="./testeindexlivro.html">Início</a></li>
+                <li><a href="./pages/testecitacao.html">Citação Manual</a></li>
+                <li><a href="./pages/testeNOVO.html">Referência Manual</a></li>
+                <li><a href="./Referenciei/Referenciei/indexReferencia.html">Busca por Livro</a></li>
+            </ul>
+        </nav>
+    </header>
+    <h1>Referenciei</h1>
+    <div class="main-menu">
+        <ul>
+            <li><a href="./pages/testecitacao.html">Citação Manual</a></li>
+            <li><a href="./pages/testeNOVO.html">Referência Manual</a></li>
+            <li><a href="./Referenciei/Referenciei/indexReferencia.html">Buscar Livro</a></li>
+            <!-- <li><a href="#">Como usar</a></li> -->
+        </ul>
+    </div>
+</body>
+</html>

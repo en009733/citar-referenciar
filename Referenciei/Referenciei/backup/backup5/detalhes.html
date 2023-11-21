@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detalhes do Livro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .details {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .details h2 {
+            margin-top: 0;
+        }
+        .details p {
+            margin: 10px 0;
+        }
+        .return-button {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .return-button button {
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="return-button">
+        <button onclick="goBack()">Voltar para a página anterior</button>
+    </div>
+
+    <div class="details">
+        <h2>Detalhes do Livro</h2>
+        <p id="title"></p>
+        <p id="authors"></p>
+        <p id="description"></p>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const itemData = sessionStorage.getItem('detalhes');
+            const book = JSON.parse(itemData);
+	    console.log(itemData);
+
+            if (book) {
+                const titleElement = document.getElementById('title');
+                titleElement.textContent = "Título: " + book.volumeInfo.title;
+
+                const authorsElement = document.getElementById('authors');
+                authorsElement.textContent = "Autores: " + (book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : "Desconhecido");
+
+                const descriptionElement = document.getElementById('description');
+                descriptionElement.textContent = "Descrição: " + (book.volumeInfo.description ? book.volumeInfo.description : "Sem descrição disponível");
+            }
+        };
+
+        function goBack() {
+            window.location.href = "indexReferencia.html";
+        }
+    </script>
+</body>
+</html>

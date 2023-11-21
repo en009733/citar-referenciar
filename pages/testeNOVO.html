@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de Referências ABNT</title>
+  <script src="../static_files/js/utils.js"></script>
+  <style>
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #2c3e50;
+      padding: 10px 20px;
+    }
+    header img {
+        width: 60px; /* Reduzindo tamanho do logo para mobile */
+        height: 60px; /* Reduzindo tamanho do logo para mobile */
+    }
+
+    nav ul {
+        list-style: none;
+        display: flex;
+        margin: 0;
+        padding: 0;
+    }
+
+    nav li {
+        margin: 0 10px;
+        color: #fff; /* Cor do texto do menu */
+    }
+
+    nav a {
+        text-decoration: none; /* Remover sublinhado nos links */
+        color: inherit; /* Herdar a cor do elemento pai */
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    #resultado {
+      margin-top: 20px;
+      min-height: 92px;
+      border: 1px solid #ddd;
+      padding: 10px;
+    }
+    #titulo-livro {
+      font-weight: bold;
+    }
+    #titulo-livro-capitulosDeLivro{
+      font-weight: bold;
+    }
+    #titulo-tese {
+      font-weight: bold;
+    }
+    #nome-periodico {
+      font-weight: bold;
+    }
+    #nome-jornal {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="seu-logo.png" alt="Logo da Referenciei">
+    <nav>
+        <ul>
+            <li><a href="../testeindexlivro.html">Início</a></li>
+            <li><a href="./testecitacao.html">Citação Manual</a></li>
+            <li><a href="./testeNOVO.html">Referência Manual</a></li>
+            <li><a href="../Referenciei/Referenciei/indexReferencia.html">Busca por Livro</a></li>
+        </ul>
+    </nav>
+  </header>
+  <h1>Gerador de Referências ABNT</h1>
+
+  <label for="tipoObra">Tipo de Obra:</label>
+  <select id="tipoObra" onchange="mostrarCampos()">
+    <option value="vazio">Selecione o Tipo</option>
+    <option value="livro">Livro</option>
+    <option value="video">Video</option>
+    <option value="capitulo">Capítulo de Livro</option>
+    <option value="tese">Dissertações e Teses</option>
+    <option value="artigoPeriodico">Artigos de Periódicos</option>
+    <option value="artigoJornais">Artigos de Jornais</option>
+    <option value="evento">Eventos: Anais Congresso</option>
+
+
+    <!-- Adicione mais opções conforme necessário -->
+  </select>
+
+  <div id="campos">
+    <!-- Campos específicos para cada tipo de obra serão exibidos aqui -->
+  </div>
+
+  <button style="margin-top: 20px;" onclick="gerarReferencia()">Gerar Referência</button>
+
+  <div id="resultado">
+    <div id="resultado-livro" style="display: none;">
+      <div style="border-bottom: 1px solid gray; margin-bottom: 15px;"><strong>Resultado | Tipo: Livro</strong><br><br></div>
+      <span id="autor-livro"></span> <span id="titulo-livro"></span> <span id="local-livro"></span>: <span id="editora-livro"></span>, <span id="ano-livro"></span>.
+      <!-- <<FERNANDES, F.>> <<A revolução burguesa no Brasil.>> <<Rio de Janeiro: Zahar, 1975.>> -->
+    </div>
+            
+    <div id="resultado-video" style="display: none;">
+      <div style="border-bottom: 1px solid gray; margin-bottom: 15px;"><strong>Resultado | Tipo: Vídeo</strong><br><br></div>
+      <span id="autor-video"></span> <span id="titulo-video"></span>. <span id="plataforma-video"></span>, <span id="data-video"></span>. Disponível em: <span id="link-video"></span>. Acesso em: <span id="acesso-video"></span>.
+      <!-- SOBRENOME, Nome do autor do vídeo (ou nome do canal). Título do vídeo. YouTube, data da publicação. Disponível em: link do vídeo. Acesso em: data que o vídeo foi acessado. -->
+    </div>
+
+    <div id="resultado-capitulosDeLivro" style="display: none;">
+      <div style="border-bottom: 1px solid gray; margin-bottom: 15px;"><strong>Resultado | Tipo: Capitulos de Livro</strong><br><br></div>
+      <span id="autor-capitulosDeLivro"></span> <span id="titulo-capitulosDeLivro"></span>. <span id="organizador-capitulosDeLivro"></span> <span id="titulo-livro-capitulosDeLivro"></span>. <span id="local-capitulosDeLivro"></span>: <span id="editora-capitulosDeLivro"></span>, <span id="ano-capitulosDeLivro"></span>. p.<span id="paginas-capitulosDeLivro"></span>.
+      <!-- <<SINGER, P.>> <<A política das classes dominantes.>> <<In: IANNI, O. (Org.). Política e revolução social no Brasil.>> <<Rio de Janeiro: Civilização Brasileira, 1965. p.65-125.>> -->
+    </div>
+    <div id="resultado-tese" style="display: none;">
+      <div style="border-bottom: 1px solid gray; margin-bottom: 15px;"><strong>Resultado | Tipo: Dissertações e Teses</strong><br><br></div>
+      <span id="autor-tese"></span> <span id="titulo-tese"></span>. <span id="qtd-paginas-tese"></span>f <span id="natureza-tese"></span> - <span id="instituicao-tese"></span>, <span id="local-tese">, </span><span id="ano-tese"></span>.
+      <!-- <<SOUZA, M. T. de.>> <<Instituições e política congressual: a experiência congressual recente.>> <<197f. Tese (Doutorado em Sociologia) - Faculdade de Ciências e Letras, Universidade Estadual Paulista, Araraquara, 1998.>> -->
+    </div>
+    <div id="resultado-artigosDePeriodico" style="display: none;">
+      <div style="border-bottom: 1px solid gray; margin-bottom: 15px;"><strong>Resultado | Tipo: Artigos de Periódicos</strong><br><br></div>
+      <span id="autor-periodico"></span> <span id="titulo-artigo-periodico"></span>. <span id="nome-periodico"></span>, <span id="local-periodico"></span>, <span id="volume-periodico"></span>, <span id="numero-periodico"></span>, p.<span id="paginas-periodico"></span>, <span id="ano-periodico"></span>.
+      <!-- <<SAES, D.>> <<Uma contribuição à crítica da teoria das elites.>> <<Sociologia e Política, Curitiba, v.1, n.3, p.7-20, 1994.>> -->
+    </div>
+    <div id="resultado-artigoDeJornal" style="display: none;">
+      <div style="border-bottom: 1px solid gray; margin-bottom: 15px;"><strong>Resultado | Tipo: Artigos de Jornal</strong><br><br></div>
+      <span id="autor-jornal"></span> <span id="titulo-jornal"></span>. <span id="nome-jornal"></span>, <span id="local-jornal"></span>, <span id="data-jornal"></span>. <span id="secao-jornal"></span>, p.<span id="paginas-jornal"></span>.
+      <!-- <<DRUMMOND, R.>> <<A hora de matar os demônios.>> <<Jornal do Brasil, Rio de Janeiro, 6 fev. 1988. Idéias, p.8-9.>> -->
+    </div>
+    <div id="resultado-entrevista" style="display: none;">
+      <!-- <<DRUMMOND, R.>> <<A pior censura é a dos próprios intelectuais.>> <<[nov. 1978]. Entrevistador: Charles Magno Medeiros. Jornal do Brasil, Rio de Janeiro, p. 4, 11 nov. 1978a.>> -->
+    </div>
+    <div id="resultado-evento" style="display: none;"> <!-- Eventos (Congressos, Conferências, Simpósios, Workshops, Jornadas e outros): -->
+      <span id="autor-evento"></span> <span id="titulo-trabalho"></span>. <span id="nome-evento"></span>. <span id="anais-evento"></span>. <span id="local-evento"></span>: <span id="editora-evento"></span>, <span id="ano-evento"></span>.
+      <!-- <<BRUSCHINI, C.; RIDENTI, S.>> <<Trabalho domiciliar: uma tarefa para toda a família.>> <<In: SIMPÓSIO DE ECONOMIA FAMILIAR, 1., 1996, Viçosa. Anais... Viçosa: Ed. UFV, 1996.>> -->
+    </div>
+    <div id="resultado-publicacaoOnline" style="display: none;">
+      <!-- <<TAVES, R. F.>> <<Ministério cota pagamento de 46,5 mil professores.>> <<O Globo. Rio de Janeiro, 19 abr. 1998. Disponível em:. Acesso em: 19 abr. 1998.>> -->
+    </div>
+    <div id="resultado-dicionario" style="display: none;">
+      <!-- <<AULETE, Caldas.>> <<Dicionário contemporâneo da Língua Portuguesa.>> <<3. ed. Rio de Janeiro: Delta, 1980. 5 v.>> -->
+    </div>
+    <div id="resultado-atlas" style="display: none;">
+      <!-- <<MOURÃO, Ronaldo Rogério de Freitas.>> <<Atlas celeste.>> <<5. ed. Petrópolis: Vozes, 1984. 175 p.>> -->
+    </div>
+    <div id="resultado-enciclopedia" style="display: none;">
+      <!-- <<THE NEW Encyclopaedia Britannica: micropaedia.>> <<Chicago: Encyclopaedia Britannica, 1986. 30 v.>> -->
+    </div>
+    <div id="resultado-normasTecnicas" style="display: none;">
+      <!-- <<ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS.>> <<Resumos: NB-88.>> <<Rio de Janeiro, 1987. 3 p.>> -->
+    </div>
+    <div id="resultado-relatoriosTecnicoCientificos" style="display: none;">
+      <!-- <<SOUZA, Ubiraci Espinelli Lemes de; MELHADO, Silvio Burratino.>> <<Subsídios para a avaliação do custo de mão-de-obra na construção civil.>> <<São Paulo: EPUSP, 1991. 38 p. (Série Texto Técnico, TT/PCC/01).>> -->
+    </div>
+    <div id="resultado-associacoesEmpresasEInstituicoes" style="display: none;">
+      <!-- <<ASSOCIAÇÃO BRASILEIRA DE ENFERMAGEM.>> <<Centro de Estudos em Enfermagem.>> <<Informações pesquisas e pesquisadores em Enfermagem.>> <<São Paulo, 1916. 124 p.>> -->
+    </div>
+  </div>
+
+  <script>
+
+    function mostrarCampos() {
+      var tipoObra = document.getElementById('tipoObra').value;
+      var camposDiv = document.getElementById('campos');
+      camposDiv.innerHTML = '';
+
+      if (tipoObra === 'livro') {
+        camposDiv.innerHTML += `
+          <label for="autores">Autores: (coloque nome por extenso e separe cada autor por vírgula)</label>
+          <input type="text" id="autores" value="Fabio Fernandes, João dos Santos">
+
+          <label for="titulo">Título:</label>
+          <input type="text" id="titulo" value="A revolução burguesa no Brasil">
+        
+          <label for="local">Local de Publicação:</label>
+          <input type="text" id="local" value="Rio de Janeiro">
+
+          <label for="editora">Editora:</label>
+          <input type="text" id="editora" value="Zahar">
+
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1975">
+        
+        
+        
+        
+          `;
+      } else if (tipoObra === 'video') {
+        camposDiv.innerHTML += `
+          <label for="autores">Autores: (DEIXE EM BRANCO SE NÃO HOUVER)  (coloque nome por extenso e separe cada autor por vírgula. )</label>
+          <input type="text" id="autores" value="">
+          
+          <label for="canal">Nome do Canal: </label>
+          <input type="text" id="canal" value="Canaltech">
+
+          <label for="titulo">Título do vídeo:</label>
+          <input type="text" id="titulo" value="O ROTEADOR que você usa provavelmente é o problema da sua INTERNET RUIM">
+        
+          <label for="plataforma">Plataforma:</label>
+          <input type="text" id="plataforma" value="YouTube">
+
+          <label for="data">Data do vídeo: </label>
+          <input type="text" id="data" value="27 de julho de 2010">
+
+          <label for="link">Link:</label>
+          <input type="text" id="link" value="https://www.youtube.com/watch?v=xJaCHrMX9ys">
+        
+          <label for="acesso">Data em que você acessou o vídeo:</label>
+          <input type="text" id="acesso" value="28 de julho de 2023">
+        
+          `;
+
+
+
+
+      } else if (tipoObra === 'capitulo') {
+        camposDiv.innerHTML += `
+          <label for="autoresCapitulo">Autores do Capítulo: (coloque nome por extenso e separe cada autor por vírgula)</label>
+          <input type="text" id="autoresCapitulo" value="Paul Singer">
+
+          <label for="tituloCapitulo">Título do Capítulo:</label>
+          <input type="text" id="tituloCapitulo" value="A política das classes dominantes">
+        
+          <label for="organizadorCapitulo">Organizador(Org.):</label>
+          <input type="text" id="organizadorCapitulo" value="Orland Ianni">
+        
+          <label for="titulo">Título do Livro:</label>
+          <input type="text" id="titulo" value="Política e revolução social no Brasil">
+
+          <label for="local">Local de Publicação:</label>
+          <input type="text" id="local" value="Rio de Janeiro">
+
+          <label for="editora">Editora:</label>
+          <input type="text" id="editora" value="Civilização Brasileira">
+
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1965">
+        
+          <label for="paginas">Páginas do Capítulo:</label>
+          <input type="text" id="paginas" value="65-125">
+
+        
+          `;
+      } else if (tipoObra === 'tese') {
+        camposDiv.innerHTML += `
+          <label for="autorTese">Autor da Tese: (coloque nome por extenso e separe cada autor por vírgula)</label>
+          <input type="text" id="autorTese" value="Mateus Trando de Souza, Guilhotina Rocha">
+
+          <label for="tituloTese">Título da Tese:</label>
+          <input type="text" id="tituloTese" value="Instituições e política congressual: a experiência congressual recente">
+
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1998">
+
+          <label for="qtdPaginas">Total de Páginas:</label>
+          <input type="text" id="qtdPaginas" value="197">
+
+          <label for="natureza">Natureza do Trabalho:</label>
+          <input type="text" id="natureza" value="Tese (Doutorado em Sociologia)">
+
+          <label for="instituicao">Instituição:</label>
+          <input type="text" id="instituicao" value="Faculdade de Ciências e Letras, Universidade Estadual Paulista">
+
+          <label for="local">Local de Publicação:</label>
+          <input type="text" id="local" value=" Araraquara">
+        `;
+      } else if (tipoObra === 'artigoPeriodico') {
+        camposDiv.innerHTML += `
+          <label for="autorArtigo">Autor do Artigo: (coloque nome por extenso e separe cada autor por vírgula)</label>
+          <input type="text" id="autorArtigo" value="Diogenes Saes">
+
+          <label for="tituloArtigo">Título do Artigo:</label>
+          <input type="text" id="tituloArtigo" value="Uma contribuição à crítica da teoria das elites">
+
+          <label for="nomePeriodico">Nome do Periódico:</label>
+          <input type="text" id="nomePeriodico" value="Sociologia e Política">
+
+          <label for="local">Local de Publicação:</label>
+          <input type="text" id="local" value=" Curitiba">
+
+          <label for="volume">Volume:</label>
+          <input type="text" id="volume" value="v.1">
+
+          <label for="numero">Numero:</label>
+          <input type="text" id="numero" value="n.3">
+
+          <label for="paginas">Paginas do Artigo</label>
+          <input type="text" id="paginas" value="7-20">
+         
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994">
+
+        `;
+      } else if (tipoObra === 'artigoJornais') {
+        camposDiv.innerHTML += `
+          <label for="autorArtigo">Autor do Artigo de Jornal: (coloque nome por extenso e separe cada autor por vírgula)</label>
+          <input type="text" id="autorArtigo" value="Ronaldo Drummond">
+
+          <label for="tituloArtigo">Título do Artigo de Jornal:</label>
+          <input type="text" id="tituloArtigo" value="A hora de matar os demônios">
+
+          <label for="nomePeriodico">Nome do Jornal:</label>
+          <input type="text" id="nomePeriodico" value="Jornal do Brasil">
+
+          <label for="local">Local de Publicação:</label>
+          <input type="text" id="local" value=" Rio de Janeiro">
+
+          <label for="data">Data:</label>
+          <input type="text" id="data" value="6 fev. 1988">
+
+          <label for="secao">Seção:</label>
+          <input type="text" id="secao" value="Idéias">
+
+          <label for="paginas">Paginas do Artigo de Jornal</label>
+          <input type="text" id="paginas" value="8-9">
+        `;
+      } else if (tipoObra === 'entrevistas') {
+        
+        // Entrevistas:
+        // <<DRUMMOND, R.>> <<A pior censura é a dos próprios intelectuais.>> <<[nov. 1978]. Entrevistador: Charles Magno Medeiros. Jornal do Brasil, Rio de Janeiro, p. 4, 11 nov. 1978a.>>
+
+        // Entrevistado: DRUMMOND, R.
+        // Título da entrevista: A pior censura é a dos próprios intelectuais.
+        // Data: [nov. 1978].
+        // Entrevistador: Charles Magno Medeiros.
+        // Nome do jornal: Jornal do Brasil.
+        // Local de publicação: Rio de Janeiro.
+        // Página: 4.
+        // Data da publicação: 11 nov. 1978a.
+      
+        camposDiv.innerHTML += `
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994.">
+
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994.">
+        `;
+      } else if (tipoObra === 'eventos') {
+        
+
+        /*
+        <span id="autor-evento"></span>
+        <span id="titulo-trabalho"></span>. 
+        <span id="nome-evento"></span>. 
+        <span id="anais-evento"></span>. 
+        <span id="local-evento"></span>: 
+        <span id="editora-evento"></span>, 
+        <span id="ano-evento"></span>.
+        */
+        // Eventos:
+        // <<BRUSCHINI, C.; RIDENTI, S.>> <<Trabalho domiciliar: uma tarefa para toda a família.>> <<In: SIMPÓSIO DE ECONOMIA FAMILIAR, 1., 1996, Viçosa. Anais... Viçosa: Ed. UFV, 1996.>>
+
+        // Autores: BRUSCHINI, C.; RIDENTI, S.
+        // Título do trabalho: Trabalho domiciliar: uma tarefa para toda a família.
+        // Nome do evento: SIMPÓSIO DE ECONOMIA FAMILIAR, 1., 1996, Viçosa.
+        // Anais: Anais... Viçosa: Ed. UFV, 1996.
+      
+        camposDiv.innerHTML += `
+          <label for="autores">Autores: (coloque nome por extenso e separe cada autor por vírgula)</label>
+          <input type="text" id="autores" value="">
+
+          <label for="organizadores">organizadores: (coloque nome por extenso e separe cada autor por vírgula)</label>
+          <input type="text" id="organizadores" value="Carlos Bruschini, Sandro Ridenti">
+
+          <label for="titulo">Título do Trabalho:</label>
+          <input type="text" id="titulo" value="Trabalho domiciliar: uma tarefa para toda a família">
+
+          <label for="nomeEvento">Nome do Evento:</label>
+          <input type="text" id="nomeEvento" value="In: SIMPÓSIO DE ECONOMIA FAMILIAR, 1., 1996, Viçosa">
+
+          <label for="anais">Anais Evento:</label>
+          <input type="text" id="anais" value="Anais">
+         
+          <label for="local">Local do Evento:</label>
+          <input type="text" id="local" value="Viçosa">
+
+          <label for="editora">Editora:</label>
+          <input type="text" id="editora" value="Ed. UFV">
+
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1996">
+
+        `;
+      } else if (tipoObra === 'publicacaoOnline') {
+        
+        // Publicação on-line:
+        // <<TAVES, R. F.>> <<Ministério cota pagamento de 46,5 mil professores.>> <<O Globo. Rio de Janeiro, 19 abr. 1998. Disponível em:. Acesso em: 19 abr. 1998.>>
+
+        // Autor: TAVES, R. F.
+        // Título da notícia: Ministério cota pagamento de 46,5 mil professores.
+        // Nome do jornal: O Globo.
+        // Local de publicação: Rio de Janeiro.
+        // Data: 19 abr. 1998.
+        // Disponível em: (link).
+        // Acesso em: 19 abr. 1998.
+      
+        camposDiv.innerHTML += `
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994.">
+
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994.">
+        `;
+      } else if (tipoObra === 'dicionarios') {
+        
+        // Dicionários:
+        // <<AULETE, Caldas.>> <<Dicionário contemporâneo da Língua Portuguesa.>> <<3. ed. Rio de Janeiro: Delta, 1980. 5 v.>>
+
+        // Autor: AULETE, Caldas.
+        // Título do dicionário: Dicionário contemporâneo da Língua Portuguesa.
+        // Edição: 3. ed.
+        // Local de publicação: Rio de Janeiro.
+        // Editora: Delta.
+        // Ano: 1980.
+        // Volume: 5 v.
+      
+        camposDiv.innerHTML += `
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994.">
+
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994.">
+        `;
+      } else if (tipoObra === 'atlas') {
+        
+        // Atlas:
+        // <<MOURÃO, Ronaldo Rogério de Freitas.>> <<Atlas celeste.>> <<5. ed. Petrópolis: Vozes, 1984. 175 p.>>
+
+        // Autor: MOURÃO, Ronaldo Rogério de Freitas.
+        // Título do atlas: Atlas celeste.
+        // Edição: 5. ed.
+        // Local de publicação: Petrópolis.
+        // Editora: Vozes.
+        // Ano: 1984.
+        // Número de páginas: 175.
+      
+        camposDiv.innerHTML += `
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994.">
+
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994.">
+        `;
+      } else if (tipoObra === 'enciclopedias') {
+        
+        // Enciclopédias:
+        // <<THE NEW Encyclopaedia Britannica: micropaedia.>> <<Chicago: Encyclopaedia Britannica, 1986. 30 v.>>
+
+        // Título da enciclopédia: THE NEW Encyclopaedia Britannica: micropaedia.
+        // Local de publicação: Chicago.
+        // Editora: Encyclopaedia Britannica.
+        // Ano: 1986.
+        // Número de volumes: 30 v.
+      
+        camposDiv.innerHTML += `
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994.">
+
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994.">
+        `;
+      } else if (tipoObra === 'normasTecnicas') {
+        
+        // Normas Técnicas:
+        // <<ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS.>> <<Resumos: NB-88.>> <<Rio de Janeiro, 1987. 3 p.>>
+
+        // Entidade responsável: ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS.
+        // Título: Resumos: NB-88.
+        // Local de publicação: Rio de Janeiro.
+        // Ano: 1987.
+        // Número de páginas: 3 p.
+      
+        camposDiv.innerHTML += `
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994.">
+
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994.">
+        `;
+      } else if (tipoObra === 'relatoriosTecnicoCientifico') {
+        
+        // Relatórios técnico-científicos:
+        // <<SOUZA, Ubiraci Espinelli Lemes de; MELHADO, Silvio Burratino.>> <<Subsídios para a avaliação do custo de mão-de-obra na construção civil.>> <<São Paulo: EPUSP, 1991. 38 p. (Série Texto Técnico, TT/PCC/01).>>
+
+        // Autores: SOUZA, Ubiraci Espinelli Lemes de; MELHADO, Silvio Burratino.
+        // Título do relatório: Subsídios para a avaliação do custo de mão-de-obra na construção civil.
+        // Local de publicação: São Paulo.
+        // Instituição: EPUSP (Escola Politécnica da Universidade de São Paulo).
+        // Ano: 1991.
+        // Número de páginas: 38.
+        // Série: Série Texto Técnico, TT/PCC/01.
+      
+        camposDiv.innerHTML += `
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994.">
+
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994.">
+        `;
+      } else if (tipoObra === 'associacoesEmpresasEInstituicoes') {
+        
+        // Associações, Empresas e Instituições:
+        // <<ASSOCIAÇÃO BRASILEIRA DE ENFERMAGEM.>> <<Centro de Estudos em Enfermagem.>> <<Informações pesquisas e pesquisadores em Enfermagem.>> <<São Paulo, 1916. 124 p.>>
+
+        // Entidade: ASSOCIAÇÃO BRASILEIRA DE ENFERMAGEM.
+        // Nome do centro: Centro de Estudos em Enfermagem.
+        // Título: Informações pesquisas e pesquisadores em Enfermagem.
+        // Local: São Paulo.
+        // Ano: 1916.
+        // Número de páginas: 124 p.
+      
+        camposDiv.innerHTML += `
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994.">
+
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1994.">
+        `;
+      }
+      // Adicione mais blocos else if conforme necessário para os outros tipos de obra
+    }
+
+    function gerarReferencia() {
+      const resultadoLivro = document.getElementById('resultado-livro');
+      const resultadoVideo = document.getElementById('resultado-video');
+      const resultadoCapitulosDeLivro = document.getElementById('resultado-capitulosDeLivro');
+      const resultadotese = document.getElementById('resultado-tese');
+      const resultadoArtigosDePeriodico = document.getElementById('resultado-artigosDePeriodico');
+      const resultadoArtigoDeJornal = document.getElementById('resultado-artigoDeJornal');
+      const resultadoEntrevista = document.getElementById('resultado-entrevista');
+      const resultadoEvento = document.getElementById('resultado-evento');
+      const resultadoPublicacaoOnline = document.getElementById('resultado-publicacaoOnline');
+      const resultadoDicionario = document.getElementById('resultado-dicionario');
+      const resultadoAtlas = document.getElementById('resultado-atlas');
+      const resultadoEnciclopedia = document.getElementById('resultado-enciclopedia');
+      const resultadoNormasTecnicas = document.getElementById('resultado-normasTecnicas');
+      const resultadoRelatoriosTecnicoCientificos = document.getElementById('resultado-relatoriosTecnicoCientificos');
+      const resultadoAssociacoesEmpresasEInstituicoes = document.getElementById('resultado-associacoesEmpresasEInstituicoes');
+
+
+      resultadoLivro.style.display = 'none';
+      resultadoVideo.style.display = 'none';
+      resultadoCapitulosDeLivro.style.display = 'none'; 
+      resultadotese.style.display = 'none'; 
+      resultadoArtigosDePeriodico.style.display = 'none'; 
+      resultadoArtigoDeJornal.style.display = 'none'; 
+      resultadoEntrevista.style.display = 'none'; 
+      resultadoEvento.style.display = 'none'; 
+      resultadoPublicacaoOnline.style.display = 'none'; 
+      resultadoDicionario.style.display = 'none';
+      resultadoAtlas.style.display = 'none'; 
+      resultadoEnciclopedia.style.display = 'none'; 
+      resultadoNormasTecnicas.style.display = 'none'; 
+      resultadoRelatoriosTecnicoCientificos.style.display = 'none'; 
+      resultadoAssociacoesEmpresasEInstituicoes.style.display = 'none'; 
+
+      var tipoObra = document.getElementById('tipoObra').value;
+      var referencia = '';
+      console.log(tipoObra)
+
+      if (tipoObra === 'livro') {
+        const refautorLivro = document.getElementById('autor-livro');
+        const refTituloLivro = document.getElementById('titulo-livro');
+        const refLocalLivro = document.getElementById('local-livro');
+        const refEditoraLivro = document.getElementById('editora-livro');
+        const refAnoLivro = document.getElementById('ano-livro');
+      
+        var autores = document.getElementById('autores').value;
+        var titulo = document.getElementById('titulo').value;
+        var local = document.getElementById('local').value;
+        var editora = document.getElementById('editora').value;
+        var ano = document.getElementById('ano').value;
+
+        //tratamento de autor
+        autores = trataAutores(autores);
+
+        //tratamento titulo e subtitulo
+        var titulo = trataTitulo(titulo);
+
+
+        refautorLivro.textContent = autores
+        refTituloLivro.textContent = titulo
+        refLocalLivro.textContent = local
+        refEditoraLivro.textContent = editora
+        refAnoLivro.textContent = ano
+
+        //referencia = `${autores}. ${titulo}. ${local}: ${editora}, ${ano}.`;
+        resultadoLivro.style.display = 'block';
+      } else if(tipoObra === 'video') {
+        const refAutor = document.getElementById('autor-video');
+        const refTitulo = document.getElementById('titulo-video');
+        const refPlataforma = document.getElementById('plataforma-video');
+        const refDataPubli = document.getElementById('data-video');
+        const refLink = document.getElementById('link-video');
+        const refAcesso = document.getElementById('acesso-video');
+        /*
+        <span id="autor-video"></span> 
+        <span id="titulo-video"></span>. 
+        <span id="plataforma"></span>, 
+        <span id="data"></span>. 
+        <span id="link"></span>. 
+        <span id="acesso"></span>.
+        */
+        var autores = document.getElementById('autores').value;
+        var canal = document.getElementById('canal').value;
+        var titulo = document.getElementById('titulo').value;
+        var plataforma = document.getElementById('plataforma').value;
+        var data = document.getElementById('data').value;
+        var link = document.getElementById('link').value;
+        var acesso = document.getElementById('acesso').value;
+
+
+        if(autores == '' || autores == ' ' || autores == null || autores == undefined) {
+          refAutor.textContent = canal.toUpperCase() + ".";
+        } else {
+          refAutor.textContent = trataAutores(autores);
+        }
+
+        refTitulo.textContent = titulo;
+        refPlataforma.textContent = plataforma;
+        refDataPubli.textContent = data;
+        refLink.textContent = link;
+        refAcesso.textContent = acesso;
+
+        resultadoVideo.style.display = 'block';
+        /*
+        camposDiv.innerHTML += `
+          <label for="autores">Autores: (coloque nome por extenso e separe cada autor por vírgula. DEIXE EM BRANCO SE NÃO HOUVER)</label>
+          <input type="text" id="autores" value="Fabio Fernandes, João dos Santos">
+          
+          <label for="canal">Nome do Canal: </label>
+          <input type="text" id="canal" value="Canaltech">
+
+          <label for="titulo">Título do vídeo:</label>
+          <input type="text" id="titulo" value="O ROTEADOR que você usa provavelmente é o problema da sua INTERNET RUIM.">
+        
+          <label for="plataforma">Plataforma:</label>
+          <input type="text" id="plataforma" value="YouTube">
+
+          <label for="data">Data do vídeo: </label>
+          <input type="text" id="data" value="27 de julho de 2010">
+
+          <label for="link">Link:</label>
+          <input type="text" id="link" value="https://www.youtube.com/watch?v=xJaCHrMX9ys">
+        
+          <label for="acesso">Data em que você acessou o vídeo:</label>
+          <input type="text" id="acesso" value="28 de julho de 2023">
+
+          SOBRENOME, Nome do autor do vídeo (ou nome do canal). Título do vídeo. YouTube, data da publicação. Disponível em: link do vídeo. Acesso em: data que o vídeo foi acessado.        
+        
+          `;
+
+        */
+      } else if (tipoObra === 'capitulo') {
+        const refAutorCapitulo = document.getElementById('autor-capitulosDeLivro');
+        const refTituloCapitulo = document.getElementById('titulo-capitulosDeLivro');
+        const refOrganizadorCapitulo = document.getElementById('organizador-capitulosDeLivro');
+        const refTituloLivroCapitulo = document.getElementById('titulo-livro-capitulosDeLivro');
+        const refLocalCapitulo = document.getElementById('local-capitulosDeLivro');
+        const refEditoraCapitulo = document.getElementById('editora-capitulosDeLivro');
+        const refAnoCapitulo = document.getElementById('ano-capitulosDeLivro');
+        const refpaginasCapitulo = document.getElementById('paginas-capitulosDeLivro');
+
+        var autores = document.getElementById('autoresCapitulo').value;
+        var tituloCapitulo = document.getElementById('tituloCapitulo').value;
+        var organizador = document.getElementById('organizadorCapitulo').value;
+        var tituloLivro = document.getElementById('titulo').value;
+        var local = document.getElementById('local').value;
+        var editora = document.getElementById('editora').value;
+        var ano = document.getElementById('ano').value;
+        var paginas = document.getElementById('paginas').value;
+        
+        //tratamento de autor
+        autores = trataAutores(autores);
+
+        //tratamento de autor/org
+        organizador = trataAutores(organizador);
+
+        refAutorCapitulo.textContent = autores;
+        refTituloCapitulo.textContent = tituloCapitulo;
+        refOrganizadorCapitulo.textContent = organizador;
+        refTituloLivroCapitulo.textContent = tituloLivro;
+        refLocalCapitulo.textContent = local;
+        refEditoraCapitulo.textContent = editora;
+        refAnoCapitulo.textContent = ano;
+        refpaginasCapitulo.textContent = paginas;
+
+        resultadoCapitulosDeLivro.style.display = 'block'; 
+
+        //referencia = `${autoresCapitulo}. ${tituloCapitulo}. In: IANNI, O. (Org.). Política e revolução social no Brasil. Rio de Janeiro: Civilização Brasileira, 1965. p.65-125.`;
+      } else if (tipoObra === 'tese') {
+        const refAutorTese = document.getElementById('autor-tese');
+        const refTituloTese = document.getElementById('titulo-tese');
+        const refAnoTese = document.getElementById('ano-tese');
+        const refQtdPagTese = document.getElementById('qtd-paginas-tese');
+        const refNaturezaTese = document.getElementById('natureza-tese');
+        const refInstituicaoTese = document.getElementById('instituicao-tese');
+        const refLocalTese = document.getElementById('local-tese');
+
+
+        var autorTese = document.getElementById('autorTese').value;
+        var tituloTese = document.getElementById('tituloTese').value;
+        var anoTese = document.getElementById('ano').value;
+        var qtdPaginasTese = document.getElementById('qtdPaginas').value;
+        var naturezaTese = document.getElementById('natureza').value;
+        var instituicao = document.getElementById('instituicao').value;
+        var localTese = document.getElementById('local').value;
+
+        //tratamento de autor
+        autorTese = trataAutores(autorTese);
+
+        //tratamento titulo e subtitulo
+        tituloTese = trataTitulo(tituloTese);
+
+
+        refAutorTese.textContent = autorTese;
+        refTituloTese.textContent = tituloTese;
+        refAnoTese.textContent = anoTese;
+        refQtdPagTese.textContent = qtdPaginasTese;
+        refNaturezaTese.textContent = naturezaTese;
+        refInstituicaoTese.textContent = instituicao;
+        refLocalTese.textContent = localTese;
+       
+        resultadotese.style.display = 'block'; 
+
+
+
+        //referencia = `${autorTese}. ${tituloTese}. ${instituicao}, 1998. 197f. Tese (Doutorado em Sociologia).`;
+      } else if (tipoObra === 'artigoPeriodico') {
+        const refAutorArtigo = document.getElementById('autor-periodico');
+        const refTituloArtigo = document.getElementById('titulo-artigo-periodico');
+        const refNomeArtigo = document.getElementById('nome-periodico');
+        const refLocalArtigo = document.getElementById('local-periodico');
+        const refVolumeArtigo = document.getElementById('volume-periodico');
+        const refNumeroArtigo = document.getElementById('numero-periodico');
+        const refPaginasArtigo = document.getElementById('paginas-periodico');
+        const refAnoArtigo = document.getElementById('ano-periodico');
+        //var tituloPeriodico = document.getElementById('tituloPeriodico').value;
+
+        var autorArtigo = document.getElementById('autorArtigo').value;
+        var tituloArtigo = document.getElementById('tituloArtigo').value;
+        var nomePeriodico = document.getElementById('nomePeriodico').value;
+        var localArtigo = document.getElementById('local').value;
+        var volumeArtigo = document.getElementById('volume').value;
+        var numeroArtigo = document.getElementById('numero').value;
+        var paginasArtigo = document.getElementById('paginas').value;
+        var anoArtigo = document.getElementById('ano').value;
+
+        refAutorArtigo.textContent = trataAutores(autorArtigo);
+        refTituloArtigo.textContent = tituloArtigo;
+        refNomeArtigo.textContent = nomePeriodico;
+        refLocalArtigo.textContent = localArtigo;
+        refVolumeArtigo.textContent = volumeArtigo;
+        refNumeroArtigo.textContent = numeroArtigo;
+        refPaginasArtigo.textContent = paginasArtigo;
+        refAnoArtigo.textContent = anoArtigo;
+
+        resultadoArtigosDePeriodico.style.display = 'block';
+
+        //referencia = `${autorArtigo}. ${tituloArtigo}. ${tituloPeriodico}, Curitiba, v.1, n.3, p.7-20, 1994.`;
+      } else if (tipoObra === 'artigoJornais') {
+        const refAutorJornal = document.getElementById('autor-jornal');
+        const refTituloJornal = document.getElementById('titulo-jornal');
+        const refNomeJornal = document.getElementById('nome-jornal');
+        const refLocalJornal = document.getElementById('local-jornal');
+        const refDataJornal = document.getElementById('data-jornal');
+        const refSecaoJornal = document.getElementById('secao-jornal');
+        const refPaginasJornal = document.getElementById('paginas-jornal');
+
+
+        var autorArtigo = document.getElementById('autorArtigo').value;
+        var tituloArtigo = document.getElementById('tituloArtigo').value;
+        var nomePeriodico = document.getElementById('nomePeriodico').value;
+        var local = document.getElementById('local').value;
+        var data = document.getElementById('data').value;
+        var secao = document.getElementById('secao').value;
+        var paginas = document.getElementById('paginas').value;
+
+        refAutorJornal.textContent = trataAutores(autorArtigo);
+        refTituloJornal.textContent = tituloArtigo
+        refNomeJornal.textContent = nomePeriodico
+        refLocalJornal.textContent = local
+        refDataJornal.textContent = data
+        refSecaoJornal.textContent = secao
+        refPaginasJornal.textContent = paginas
+
+        resultadoArtigoDeJornal.style.display = 'block'; 
+
+      } else if(tipoObra === 'evento') {
+        const refAutorEvento = document.getElementById('autor-evento');
+        const refTituloEvento = document.getElementById('titulo-trabalho');
+        const refNomeEvento = document.getElementById('nome-evento');
+        const refAnaisEvento = document.getElementById('anais-evento');
+        const refLocalEvento = document.getElementById('local-evento');
+        const refEditoraEvento = document.getElementById('editora-evento');
+        const refAnoEvento = document.getElementById('ano-evento');
+
+
+        var autores = document.getElementById('autores').value;
+        var organizadores = document.getElementById('organizadores').value;
+        var titulo = document.getElementById('titulo').value;
+        var nomeEvento = document.getElementById('nomeEvento').value;
+        var anais = document.getElementById('anais').value;
+        var local = document.getElementById('local').value;
+        var editora = document.getElementById('editora').value;
+        var ano = document.getElementById('ano').value;
+
+        if(autores == '' || autores == ' ' || autores == null || autores == undefined) {
+          refAutorEvento.textContent = trataAutores(organizadores) + "(Orgs.).";
+        } else {
+          refAutorEvento.textContent = trataAutores(autores);
+        }
+        
+        refTituloEvento.textContent = titulo
+        refNomeEvento.textContent = nomeEvento
+        refAnaisEvento.textContent = anais
+        refLocalEvento.textContent = local
+        refEditoraEvento.textContent = editora
+        refAnoEvento.textContent = ano
+
+        resultadoEvento.style.display = 'block'; 
+        /*
+         camposDiv.innerHTML += `
+          <label for="autores">Autores: (coloque nome por extenso e separe cada autor por vírgula)</label>
+          <input type="text" id="autores" value="">
+
+          <label for="Organizadores">Organizadores: (coloque nome por extenso e separe cada autor por vírgula)</label>
+          <input type="text" id="autores" value="Carlos Bruschini, Sandro Ridenti">
+
+          <label for="titulo">Título do Trabalho:</label>
+          <input type="text" id="titulo" value="Trabalho domiciliar: uma tarefa para toda a família">
+
+          <label for="nomeEvento">Nome do Evento:</label>
+          <input type="text" id="nomeEvento" value="In: SIMPÓSIO DE ECONOMIA FAMILIAR, 1., 1996, Viçosa">
+
+          <label for="anais">Anais Evento:</label>
+          <input type="text" id="anais" value="Anais">
+         
+          <label for="local">Local do Evento:</label>
+          <input type="text" id="local" value="Viçosa">
+
+          <label for="editora">Editora:</label>
+          <input type="text" id="editora" value="Ed. UFV">
+
+          <label for="ano">Ano:</label>
+          <input type="text" id="ano" value="1996">
+
+        `;
+
+
+        */
+        /*
+        <span id="autor-evento"></span> 
+        <span id="titulo-trabalho"></span>. 
+        <span id="nome-evento"></span>. 
+        <span id="anais-evento"></span>. 
+        <span id="local-evento"></span>: 
+        <span id="editora-evento"></span>, 
+        <span id="ano-evento"></span>.
+        */
+
+      }
+
+      // Adicione mais blocos else if conforme necessário para os outros tipos de obra
+
+      // Construir o texto para exibição na div
+      //var resultadoText = `Resultado - Tipo: ${tipoObra}<br>${referencia}`;
+
+      // Exibir o resultado na div
+      //document.getElementById('resultado').innerHTML = resultadoText;
+    }
+  </script>
+</body>
+</html>

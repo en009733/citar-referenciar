@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="C:/Users/eduardo.silva/Desktop/Edu/static_files/css/testecitacao.css">
+    
+    <title>Citação Generator</title>
+  </head>
+  <body>
+    <header>
+      <img src="seu-logo.png" alt="Logo da Referenciei">
+      <nav>
+          <ul>
+            <li><a href="../testeindexlivro.html">Início</a></li>
+            <li><a href="./testecitacao.html">Citação Manual</a></li>
+            <li><a href="./testeNOVO.html">Referência Manual</a></li>
+            <li><a href="../Referenciei/Referenciei/indexReferencia.html">Busca por Livro</a></li>
+          </ul>
+      </nav>
+  </header>
+  <div class="citation-section">
+    <h1>Fazer Citação</h1>
+    <div class="tabs">
+      <div class="tab active" onclick="changeTab(0)">Citação direta</div>
+      <div class="tab" onclick=changeTab(1)>Citação indireta</div>
+    </div>
+    <div id="container">
+      <div class="input-group">
+        <label for="autor">Autor(es):</label>
+        <input type="text" id="autor" placeholder="ex: João Silva, Maria Santos, José de Souza">
+      </div>
+      <div class="input-group">
+        <label for="ano">Ano:</label>
+        <input type="text" id="ano" placeholder="ex: 1990">
+      </div>
+      <div class="input-group">
+        <label for="volume">Volume:</label>
+        <input type="text" id="volume" placeholder="ex: 3">
+      </div>
+      <div class="input-group">
+        <label for="pagina">Página da Citação:</label>
+        <input type="text" id="pagina" placeholder="ex: 150   ex: 149-150">
+      </div>
+      <div class="input-group">
+        <label for="citacao">Citação:</label>
+        <input type="text" id="citacao" placeholder="Digite aqui a citação sem áspas">
+      </div>
+      <button id="gerar">Gerar Citação</button>
+      <p><a href="#">Clique aqui para buscar informações da obra</a></p>
+    </div>
+    <h2>Resultado</h2>
+    <div id="resultado">
+      <p id="resultado_citacao_indireta" class="hidden">
+        Segundo <span id="nomeAutor"></span> (<span id="anoCita"></span>), <span id="textoCita"></span>.
+      </p>
+      <p id="resultado_citacao_direta" class="hidden">
+        Segundo <span id="nomeAutor"></span> (<span id="anoCita"></span>, v.<span id="volumeCita"></span>, <span id="paginaCita"></span> p.), "<span id="textoCita"></span>".
+      </p>
+      <!--
+      Segundo <span id="nomeAutor"></span> (<span id="anoCita"></span>), "<span id="textoCita"></span>".
+      -->
+    </div>
+  </div>
+  <script src="../static_files/js/testecitacao.js"></script>
+  </body>
+</html>

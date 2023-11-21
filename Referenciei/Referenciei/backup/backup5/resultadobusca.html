@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Livros do Google Books</title>
+    <style>
+        .book {
+            margin-bottom: 20px;
+            display: flex;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .book:hover {
+            background-color: lightgray;
+        }
+        .book img {
+            width: 100px;
+            height: 150px;
+            object-fit: cover;
+            margin-right: 10px;
+            float: left;
+        }
+        .book .info {
+            overflow: hidden;
+        }
+        .book .title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .book .author {
+            font-style: italic;
+            color: #666;
+        }
+        .book .no-image {
+            min-width: 100px;
+            min-height: 150px;
+            width: 100px;
+            height: 150px;
+            object-fit: cover;
+            margin-right: 10px;
+            float: left;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border: 1px solid #000;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination button {
+            margin: 0 5px;
+            padding: 5px 10px;
+        }
+        .return-button {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="return-button">
+        <button onclick="goBack()">Voltar para Buscar</button>
+    </div>
+
+    <h1>Resultado da Busca</h1>
+
+    <div id="bookList"></div>
+
+    <div class="pagination">
+        <button onclick="fetchNextBooks()">Carregar Mais</button>
+    </div>
+
+    <div class="return-button">
+        <button onclick="goBack()">Voltar para Buscar</button>
+    </div>
+
+    <script>
+        var startIndex = 0;
+        const maxResults = 20;
+        var currentQuery = '';
+
+        window.onload = function() {
+            var parametro1 = sessionStorage.getItem('parametro1');
+            console.log("Valor do parâmetro: " + parametro1);
+
+            currentQuery = parametro1;
+            fetchBooks();
+        }
+
+        function goBack() {
+            window.location.href = "indexReferencia.html";
+        }
+    
+        function fetchBooks() {
+            const url = `https://www.googleapis.com/books/v1/volumes?q=${currentQuery}&startIndex=${startIndex}&maxResults=${maxResults}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const bookList = document.getElementById('bookList');
+
+                    data.items.forEach(book => {
+                        const bookDiv = document.createElement('div');
+                        bookDiv.className = 'book';
+                        bookDiv.addEventListener('click', function() {
+                            const itemData = book;
+                            sessionStorage.setItem('detalhes', JSON.stringify(itemData));
+                            console.log( sessionStorage.getItem('detalhes'))
+                            window.location.href = "detalhes.html";
+                        });
+
+                        const thumbnail = book.volumeInfo.imageLinks?.thumbnail;
+                        if (thumbnail) {
+                            const thumbnailImg = document.createElement('img');
+                            thumbnailImg.src = thumbnail;
+                            bookDiv.appendChild(thumbnailImg);
+                        } else {
+                            const noImageDiv = document.createElement('div');
+                            noImageDiv.className = 'no-image';
+                            noImageDiv.textContent = 'Nenhuma imagem disponível';
+                            bookDiv.appendChild(noImageDiv);
+                        }
+
+                        const infoDiv = document.createElement('div');
+                        infoDiv.className = 'info';
+
+                        const title = document.createElement('h2');
+                        title.className = 'title';
+                        title.textContent = book.volumeInfo.title;
+                        infoDiv.appendChild(title);
+
+                        const authors = document.createElement('p');
+                        authors.className = 'author';
+                        authors.textContent = book.volumeInfo.authors?.join(', ');
+                        infoDiv.appendChild(authors);
+
+                        bookDiv.appendChild(infoDiv);
+
+                        bookList.appendChild(bookDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro na solicitação:', error);
+                });
+        }
+
+        function fetchNextBooks() {
+            startIndex += maxResults;
+            fetchBooks();
+        }
+    </script>
+</body>
+</html>

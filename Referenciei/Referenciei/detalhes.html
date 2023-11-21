@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <title>Detalhes do Livro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .details {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .details h2 {
+            margin-top: 0;
+        }
+        .details p {
+            margin: 10px 0;
+        }
+        .return-button {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .return-button button {
+            padding: 5px 10px;
+        }
+        .referencia {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        .referencia .autor {
+            
+        }
+
+        .referencia .titulo {
+            font-weight: bold;
+        }
+
+        .referencia .subtitulo {
+
+        }
+
+        .referencia .edicao {
+    
+        }
+
+        .referencia .local {
+            
+        }
+
+        .referencia .editora {
+            
+        }
+
+        .referencia .ano {
+            
+        }
+
+        .citacao {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .citacao .autor {
+            font-weight: bold;
+        }
+
+        .citacao .ano {
+            font-weight: bold;
+        }
+
+        .citacao .pagina {
+            font-weight: bold;
+        }
+
+        .citacao .texto {
+            font-style: italic;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ccc;
+        }
+
+    </style>
+
+    <script>
+        const indexModelo = 0;
+    </script>
+</head>
+<body>
+    <div class="return-button">
+        <button onclick="goBack()">Voltar para a página de busca</button>
+    </div>
+
+    <div class="details">
+        <h2>Detalhes do Livro</h2>
+        <p id="authors"></p>
+        <p id="title"></p>
+        <p id="editora"></p>
+        <p id="year"></p>
+        <p id="isbn13"></p>
+        <p id="isbn10"></p>
+
+        
+
+        <p id="description"></p>
+    </div>
+
+    <div class="details" style="margin-top: 20px;">
+        <div class="referencia">
+            <h2>Referência ABNT Livro</h2>
+            <span class="autor"></span>
+            <span class="autor" id="ref-autor"></span> <span id="ref-titulo" class="titulo"></span> <span id="ref-subtitulo" class="subtitulo"></span> <span id="ref-edicao" class="edicao"></span> <span id="ref-local" class="local" style="color: red;"></span> <span id="ref-editora" class="editora"></span> <span id="ref-ano" class="ano"></span>
+        </div>
+    </div>
+
+    <div class="input-group details" style="margin-top: 50px;">
+        <label for="citacao">Citação:</label>
+        <input type="text" id="citacao" placeholder="Digite aqui a citação sem áspas">
+        <button id="gerar" style="margin-top: 10px;">Gerar Citação</button>
+    </div>
+
+    
+
+    <div class="citacao details">
+        <h2>Citação direta ABNT Teste < < < NÃO ESTÁ PRONTO > > ></h2>
+        <span class="autor">SILVA, Jo�o Carlos da.</span> <span class="ano">(2022, p. 45)</span> <span class="texto">"A escrita � uma habilidade que pode ser desenvolvida com pr�tica e dedica��o."</span>
+    </div>
+        
+    
+    <script>
+        var autoresArray;
+        var autores = "";
+
+        const refAutor = document.getElementById("ref-autor");
+        const refTitulo = document.getElementById("ref-titulo");
+        const refSubtitulo = document.getElementById("ref-subtitulo");
+        const refEdicao = document.getElementById("ref-edicao");
+        const refLocalPublicacao = document.getElementById("ref-local");
+        const refEditora = document.getElementById("ref-editora");
+        const refPublicacao = document.getElementById("ref-ano");
+        
+        window.onload = function() {
+            const itemData = sessionStorage.getItem('detalhes');
+            const book = JSON.parse(itemData);
+	    console.log(itemData);
+        
+        //Montagem detalhes do livro
+        if (book) {
+            const titleElement = document.getElementById('title');
+            titleElement.textContent = "Título: " + book.volumeInfo.title;
+
+            const authorsElement = document.getElementById('authors');
+            authorsElement.textContent = "Autores: " + (book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : "Desconhecido");
+
+            const descriptionElement = document.getElementById('description');
+            descriptionElement.textContent = "Descrição: " + (book.volumeInfo.description ? book.volumeInfo.description : "Sem descrição disponível");
+
+            const editoraElement = document.getElementById('editora');
+            editoraElement.textContent = "Editora: " + book.volumeInfo.publisher
+
+            const yearElement = document.getElementById('year');
+            yearElement.textContent = "Ano: " + book.volumeInfo.publishedDate.split("-")[0];
+
+            console.log(book.volumeInfo.industryIdentifiers)
+            const isbn13Element = document.getElementById('isbn13');
+            isbn13Element.textContent = "ISBN-13: " + book.volumeInfo.industryIdentifiers[0].identifier
+
+            const isbn10Element = document.getElementById('isbn10');
+            isbn10Element.textContent = "ISBN-10: " + book.volumeInfo.industryIdentifiers[1].identifier
+        
+
+        }
+
+        //--> MONTAGEM REFERENCIA ABNT
+
+        // --> Autores Referencia
+
+
+        if(
+            book.volumeInfo.authors == undefined ||
+            book.volumeInfo.authors == null      ||
+            book.volumeInfo.authors == ""        ||
+            book.volumeInfo.authors == " "       
+        ) {
+            autores = null;
+        } else {
+
+            autores = trataAutores(book.volumeInfo.authors);
+            // autoresArray = book.volumeInfo.authors.toString().split(",");
+
+            
+
+            // for(let idx = 0; idx < autoresArray.length; idx++) {
+            //     let autor = autoresArray[idx].toUpperCase().split(" ");
+            
+            //     //exclui campo vazio de array
+            //     autor = autor.filter((vazio)=> {
+            //         return vazio !== '';
+            //     }) 
+
+
+            //     autores += autor[autor.length-1];
+            //     autor.pop();
+                
+            //     console.log(autor)
+            //     for(let y = 0; y < autor.length; y++) {
+            //         autor[y] = autor[y].slice(0, 1);
+            //         if(!y == autor.length-1){
+            //             autor[y] += ".";
+            //         }
+            //     }
+            //     autor = autor.toString();
+                
+            //     autor = autor.replace(/,/g, ' ');
+            //     console.log(autor)
+            //     autores += ", " + autor + "; "
+                
+            // }
+            // autores = autores.slice(0, autores.length-2);
+            // autores += ".";
+        }
+        //console.log(autores)
+
+
+        //--> Titulo e Subtitulo Referencia
+        let title;
+        let subtitulo;
+
+        if(book.volumeInfo.title.split(":").length > 1) {
+            let titleSplit = book.volumeInfo.title.split(":");
+            title = titleSplit[0]
+            subtitulo = ": " + titleSplit[1].toLowerCase();
+        } else {
+            title = book.volumeInfo.title + ". ";
+            subtitulo = null;
+        }
+
+        //--> Edição Referencia (Não obrigatório)
+        //não há função para isso ainda
+        
+        //--> Local de Publicação (Obrigatório)
+        //não há função para isso ainda
+
+        //--> Editora
+        let editora = book.volumeInfo.publisher + ", ";
+
+        //--> Data de Publicação
+        let anoPublicacao = book.volumeInfo.publishedDate.split("-")[0] + ".";
+        
+
+
+        if(autores != null) {
+            refAutor.textContent = autores;
+            refTitulo.textContent = title;
+            refEdicao.textContent = "" //não há método para isso ainda
+        } else {
+            refAutor.textContent = "";
+            refTitulo.textContent = title.toUpperCase();
+        }
+        
+        subtitulo != null ? refSubtitulo.textContent = subtitulo : refSubtitulo.textContent = "";
+        
+        refLocalPublicacao.textContent = "<Local de Publicação>: " //não há método para isso ainda
+        refEditora.textContent = editora;
+        refPublicacao.textContent = anoPublicacao;
+        };
+
+        //Gerar Citação
+        const gerarBtn = document.getElementById("gerar");
+
+        gerarBtn.addEventListener("click", () => {
+            const citacaoAutor      = document.getElementById("citacao-autor");
+            const citacaoAno        = document.getElementById("citacao-ano");
+            const citacaoTexto      = document.getElementById("citacao");
+            const citacaoVolume     = null;
+            const citacaoPagina     = null;
+            
+            if(autores == null) {
+                citacaoAutor.textContent = "AUTOR DESCONHECIDO";
+            } else {
+                citacaoAutor.textContent = autores;
+            }
+
+            citacaoAno.textContent = refPublicacao.textContent;
+            citacaoTexto.textContent = citacaoTexto 
+            
+            if(citacaoVolume == null && citacaoPagina == null && indexModelo == 0) {
+                indexModelo += 1;
+            }
+
+            const modelo = [
+                `${citacaoTexto} (${citacaoAutor}, ${citacaoAno}${citacaoVolume ? ', ' + "v. " + citacaoVolume : ''}${citacaoPagina ? ', p. ' + citacaoPagina : ""}) `,
+                `Para ${citacaoAutor} (${citacaoAno}${citacaoVolume ? ', ' + "v. " + citacaoVolume : ''}${citacaoPagina ? ', p. ' + citacaoPagina : ""}) ${citacaoTexto}`,
+                `Segundo ${citacaoAutor} (${citacaoAno}${citacaoVolume ? ', ' + "v. " + citacaoVolume : ''}${citacaoPagina ? ', p. ' + citacaoPagina : ""}) ${citacaoTexto}`,
+                `De acordo com ${citacaoAutor} (${citacaoAno}${citacaoVolume ? ', ' + "v. " + citacaoVolume : ''}${citacaoPagina ? ', p. ' + citacaoPagina : ""}) ${citacaoTexto}`
+            ];
+
+            
+
+            
+
+        // <div class="citacao details" style="margin-top: 50px;">
+        //     <h2>Citação direta ABNT Teste < < < NÃO ESTÁ PRONTO > > ></h2>
+        //     <span class="autor">SILVA, Jo�o Carlos da.</span> <span class="ano">(2022, p. 45)</span> <span class="texto">"A escrita � uma habilidade que pode ser desenvolvida com pr�tica e dedica��o."</span>
+        // </div>
+
+        })
+
+        function goBack() {
+            window.location.href = "indexReferencia.html";
+        }
+
+        function formataReferencia() {
+
+        }
+
+        function formataCitacao() {
+            
+        }
+
+        function trataAutores(str) {
+            let array = str.toString().split(",");
+            let authors = "";
+            
+            for(let idx = 0; idx < array.length; idx++) {
+                let autor = array[idx].toUpperCase().split(" ");
+                //console.log("idx: "+ idx + ", autor: " + autor);
+                //exclui campo vazio de array
+                autor = autor.filter((vazio)=> {
+                    return vazio !== '';
+                }) 
+                //console.log("idx: "+ idx + ", autor: " + autor);
+                
+                console.log("idx: "+ idx + ", autors: " + autor[autor.length-1]);
+                authors += autor[autor.length-1];
+                autor.pop();
+                
+                //console.log("idx: "+ idx + ", autors: " + authors);
+
+                //console.log(autor)
+                for(let y = 0; y < autor.length; y++) {
+                    autor[y] = autor[y].slice(0, 1);
+                    if(!y == autor.length-1){
+                        autor[y] += ".";
+                    }
+                }
+                autor = autor.toString();
+                
+                autor = autor.replace(/,/g, ' ');
+                console.log(autor)
+                authors += ", " + autor + "; "
+                
+            }
+            authors = authors.slice(0, authors.length-2);
+            authors += ".";
+            console.log("function de autores: " + authors);
+            return authors
+        }
+    </script>
+</body>
+</html>
