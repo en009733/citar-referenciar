@@ -42,6 +42,9 @@
       display: block;
       margin-top: 10px;
     }
+    input {
+      width: 60vw;
+    }
     #resultado {
       margin-top: 20px;
       min-height: 92px;
@@ -103,7 +106,7 @@
   <div id="resultado">
     <div id="resultado-livro" style="display: none;">
       <div style="border-bottom: 1px solid gray; margin-bottom: 15px;"><strong>Resultado | Tipo: Livro</strong><br><br></div>
-      <span id="autor-livro"></span> <span id="titulo-livro"></span> <span id="local-livro"></span>: <span id="editora-livro"></span>, <span id="ano-livro"></span>.
+      <span id="autor-livro"></span> <span id="organizadores-livro"></span> <span id="titulo-livro"></span> <span id="local-livro"></span>: <span id="editora-livro"></span>, <span id="ano-livro"></span>.
       <!-- <<FERNANDES, F.>> <<A revolução burguesa no Brasil.>> <<Rio de Janeiro: Zahar, 1975.>> -->
     </div>
             
@@ -172,8 +175,11 @@
 
       if (tipoObra === 'livro') {
         camposDiv.innerHTML += `
-          <label for="autores">Autores: (coloque nome por extenso e separe cada autor por vírgula)</label>
+          <label for="autores">Autores: (DEIXE EM BRANCO SE NÃO HOUVER) (coloque nome por extenso e separe cada autor por vírgula)</label>
           <input type="text" id="autores" value="Fabio Fernandes, João dos Santos">
+
+          <label for="organizadores">Organizadores: (DEIXE EM BRANCO SE NÃO HOUVER) (coloque nome por extenso e separe cada autor por vírgula)</label>
+          <input type="text" id="organizadores" value="Roberto Gomes Bolaños, Edgar Vivar, Maria Antonieta de las Nieves">
 
           <label for="titulo">Título:</label>
           <input type="text" id="titulo" value="A revolução burguesa no Brasil">
@@ -341,7 +347,7 @@
           <label for="ano">Ano:</label>
           <input type="text" id="ano" value="1994.">
         `;
-      } else if (tipoObra === 'eventos') {
+      } else if (tipoObra === 'evento') {
         
 
         /*
@@ -566,25 +572,32 @@
 
       if (tipoObra === 'livro') {
         const refautorLivro = document.getElementById('autor-livro');
+        const refOrganizadoresLivro = document.getElementById('organizadores-livro')
         const refTituloLivro = document.getElementById('titulo-livro');
         const refLocalLivro = document.getElementById('local-livro');
         const refEditoraLivro = document.getElementById('editora-livro');
         const refAnoLivro = document.getElementById('ano-livro');
       
         var autores = document.getElementById('autores').value;
+        var organizadores = document.getElementById('organizadores').value
         var titulo = document.getElementById('titulo').value;
         var local = document.getElementById('local').value;
         var editora = document.getElementById('editora').value;
         var ano = document.getElementById('ano').value;
 
         //tratamento de autor
-        autores = trataAutores(autores);
-
+        if(autores != "") {
+          autores = trataAutores(autores);
+        }
         //tratamento titulo e subtitulo
         var titulo = trataTitulo(titulo);
 
+        if((autores == "" || autores == " " || autores == null || autores == undefined) && (organizadores == "" || organizadores == " " || organizadores == null || organizadores == undefined)){
+          alert("Autores ou Organizadores precisa estar preenchido senão o resultado retornará errado");
+        }
 
-        refautorLivro.textContent = autores
+        refautorLivro.textContent = autores 
+        refOrganizadoresLivro.textContent = trataOrganizadores(organizadores);
         refTituloLivro.textContent = titulo
         refLocalLivro.textContent = local
         refEditoraLivro.textContent = editora
